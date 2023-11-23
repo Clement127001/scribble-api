@@ -1,4 +1,5 @@
 const User = require("../model/user");
+const Projects = require("../model/projects");
 const { StatusCodes } = require("http-status-codes");
 const { BadRequestError, UnauthorizedError } = require("../errors");
 
@@ -37,13 +38,19 @@ const showUser = async (req, res) => {
   const { id: userId } = req.params;
 
   const user = await User.findOne({ _id: userId });
+  const projects = await Projects.find({ createdBy: userId });
 
+  const projectsList = projects.map((project) => {
+    const { images, _id: projectId, category } = project;
+
+    return { projectId, images, category };
+  });
   if (!user)
     return res
       .send(StatusCodes.BAD_REQUEST)
       .send(`No user found with : ${userId} id`);
 
-  res.status(StatusCodes.OK).json({ user });
+  res.status(StatusCodes.OK).json({ user, projects: projectsList });
 };
 
 module.exports = {
