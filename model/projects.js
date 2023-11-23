@@ -11,11 +11,13 @@ const projectSchema = new mongoose.Schema(
     name: {
       type: String,
       required: [true, "Please provide name for the scib"],
+      trim: true,
       minlength: 5,
       maxlength: 30,
     },
     description: {
       type: String,
+      trim: true,
       minlength: [20, "Please provide description with alteast 20 characters"],
       maxlength: [100, "Description should be within 100 characters"],
     },
@@ -45,10 +47,12 @@ const projectSchema = new mongoose.Schema(
     },
     githubUrl: {
       type: String,
+      trim: true,
       unique: true,
     },
     livesiteUrl: {
       type: String,
+      trim: true,
       unique: true,
     },
     createdBy: {

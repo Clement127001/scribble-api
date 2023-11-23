@@ -38,6 +38,11 @@ const showUser = async (req, res) => {
   const { id: userId } = req.params;
 
   const user = await User.findOne({ _id: userId });
+  if (!user)
+    return res
+      .send(StatusCodes.BAD_REQUEST)
+      .send(`No user found with : ${userId} id`);
+
   const projects = await Projects.find({ createdBy: userId });
 
   const projectsList = projects.map((project) => {
@@ -45,10 +50,6 @@ const showUser = async (req, res) => {
 
     return { projectId, images, category };
   });
-  if (!user)
-    return res
-      .send(StatusCodes.BAD_REQUEST)
-      .send(`No user found with : ${userId} id`);
 
   res.status(StatusCodes.OK).json({ user, projects: projectsList });
 };

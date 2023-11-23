@@ -1,5 +1,9 @@
 const { StatusCodes } = require("http-status-codes");
-const { NotFoundError } = require("../errors");
+const {
+  NotFoundError,
+  UnauthorizedError,
+  BadRequestError,
+} = require("../errors");
 const Project = require("../model/projects");
 const User = require("../model/user");
 
@@ -45,13 +49,57 @@ const createNewProject = async (req, res) => {
 };
 
 const editProject = async (req, res) => {
-  const { id: projectId } = req.params;
-  res.send(`Edit project with id : ${projectId} `);
+  const {
+    params: { id: projectId },
+    user: { userId },
+    body: { name, description, images, category, githubUrl, livesiteUrl },
+  } = req;
+
+  if (!userId) throw new UnauthorizedError("Unauthorised access");
+
+  if (
+    (!name && name === "") ||
+    (!description && description === "") ||
+    (!images && images === "") ||
+    (!category && category === "") ||
+    (!githubUrl && githubUrl == "") ||
+    (!livesiteUrl && livesiteUrl == "")
+  )
+    throw new BadRequestError("Please provide value");
+
+  const updatedProject = await Project.findByIdAndUpdate(
+    { _id: projectId, createdBy: userId },
+    req.body,
+    {
+      new: true,
+      runvalidators: true,
+    }
+  );
+
+  if (!updatedProject)
+    throw new NotFoundError(`No Project is found with ${projectId} id`);
+
+  res.status(StatusCodes.OK).json({ project: updatedProject });
 };
 
 const deleteProject = async (req, res) => {
-  const { id: projectId } = req.params;
-  res.send(`Delete project with id : ${projectId}`);
+  const {
+    params: { id: projectId },
+    user: { userId },
+  } = req;
+
+  if (!userId) throw new UnauthorizedError("Unauthorised access");
+
+  const project = await Project.findByIdAndDelete({
+    _id: projectId,
+    createdBy: userId,
+  });
+
+  if (!project)
+    throw new NotFoundError(`No Project is found with ${projectId} id`);
+  res
+    .status(StatusCodes.OK)
+    .json({ msg: "Project is delsted", deletedProject: project });
 };
 
 module.exports = {
