@@ -19,6 +19,8 @@ const projectSchema = new mongoose.Schema(
       maxlength: [100, "Description should be within 100 characters"],
     },
     images: [imageSchema],
+    like: Number,
+    views: Number,
     category: {
       type: String,
       enum: {

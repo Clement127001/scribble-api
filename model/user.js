@@ -20,6 +20,10 @@ const UserSchema = new mongoose.Schema({
   profile: {
     type: String,
   },
+  role: {
+    type: String,
+    required: [true, "please provide role"],
+  },
   description: {
     type: String,
     minlength: [20, "please provide description with atleast 20 characters"],
