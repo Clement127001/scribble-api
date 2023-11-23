@@ -28,4 +28,16 @@ const uploadImage = (image) => {
   });
 };
 
-module.exports = { uploadImage };
+const uploadMutlitpleImage = (images) => {
+  return new Promise((resolve, reject) => {
+    const uploads = images.map((base) => uploadImage(base.imageUrl));
+
+    Promise.all(uploads)
+      .then((values) => {
+        resolve(values);
+      })
+      .catch((err) => reject(err));
+  });
+};
+
+module.exports = { uploadImage, uploadMutlitpleImage };

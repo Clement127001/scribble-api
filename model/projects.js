@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const User = require("./user");
+const { uploadMutlitpleImage } = require("../utils/uploadImage");
 
 const imageSchema = new mongoose.Schema({
   imageUrl: String,
@@ -59,5 +60,15 @@ const projectSchema = new mongoose.Schema(
 );
 
 //have to save the images link after saving in the cloudinary.
+
+projectSchema.pre("save", async function () {
+  const urls = await uploadMutlitpleImage(this.images);
+
+  const imageUrls = urls.map((image) => {
+    return { imageUrl: image };
+  });
+
+  this.images = imageUrls;
+});
 
 module.exports = mongoose.model("Project", projectSchema);
