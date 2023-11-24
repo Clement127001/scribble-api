@@ -7,8 +7,38 @@ const {
 const Project = require("../model/projects");
 const User = require("../model/user");
 
+const getSingleuser = (id, projId) => {
+  return new Promise(async (resolve, reject) => {
+    const project = await Project.findOne({ _id: projId });
+    const user = await User.findOne({ _id: id });
+
+    if (user) {
+      return resolve({ project, user });
+    } else {
+      return reject("Someting went wrong");
+    }
+  });
+};
+
+const getUsers = (projects) => {
+  return new Promise((resolve, reject) => {
+    const newProject = projects.map((project) => {
+      const { createdBy, _id } = project;
+      return getSingleuser(createdBy, _id);
+    });
+
+    Promise.all(newProject)
+      .then((values) => resolve(values))
+      .catch((err) => reject(err));
+  });
+};
+
 const getAllProjects = async (req, res) => {
-  res.send("Get all projects");
+  const projects = await Project.find({});
+
+  const newResults = await getUsers(projects);
+
+  res.status(StatusCodes.OK).json({ projects: newResults });
 };
 
 const getProject = async (req, res) => {
