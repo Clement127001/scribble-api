@@ -44,7 +44,10 @@ const getProject = async (req, res) => {
 };
 
 const createNewProject = async (req, res) => {
-  const project = await Project.create(req.body);
+  const { userId } = req.user;
+
+  if (!userId) throw new UnauthorizedError("Unauthorized acesss");
+  const project = await Project.create({ ...req.body, createdBy: userId });
   res.status(StatusCodes.CREATED).json({ project });
 };
 
