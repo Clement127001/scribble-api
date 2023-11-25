@@ -13,7 +13,7 @@ const projectSchema = new mongoose.Schema(
       required: [true, "Please provide name for the scib"],
       trim: true,
       minlength: 5,
-      maxlength: 30,
+      maxlength: 50,
     },
     description: {
       type: String,
@@ -34,10 +34,7 @@ const projectSchema = new mongoose.Schema(
           "Mobile",
           "UI/UX",
           "Game Dev",
-          "DevOps",
-          "Data Science",
-          "Machine Learning",
-          "Cybersecurity",
+          "Design",
           "Blockchain",
           "E-commerce",
           "Chatbots",
@@ -47,13 +44,9 @@ const projectSchema = new mongoose.Schema(
     },
     githubUrl: {
       type: String,
-      trim: true,
-      unique: true,
     },
     livesiteUrl: {
       type: String,
-      trim: true,
-      unique: true,
     },
     createdBy: {
       type: mongoose.Types.ObjectId,

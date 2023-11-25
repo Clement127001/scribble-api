@@ -34,11 +34,13 @@ const getUsers = (projects) => {
 };
 
 const getAllProjects = async (req, res) => {
-  const projects = await Project.find({});
+  let projects = await Project.find({});
 
   const newResults = await getUsers(projects);
 
-  res.status(StatusCodes.OK).json({ projects: newResults });
+  projects = newResults;
+
+  res.status(StatusCodes.OK).json({ projects });
 };
 
 const getProject = async (req, res) => {
